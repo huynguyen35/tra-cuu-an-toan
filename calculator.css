@@ -1,0 +1,24 @@
+/* Styles bổ sung cho chức năng Bảng tính tiền phạt; không cần thay style.css hiện có */
+.penalty-calculator{margin:28px 0;padding:22px;border:1px solid #d8e0e9;border-radius:16px;background:#f8fafc}
+.calculator-header{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px}
+.calculator-header h2{margin:0 0 8px}.calculator-header p{margin:0;color:#667085;line-height:1.5}
+.calculator-actions{display:flex;gap:8px}.calc-clear-all,.remove-calculator-item{border:1px solid #d0d5dd;background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer;color:#344054}
+.calculator-empty{padding:18px;text-align:center;color:#667085;background:#fff;border:1px dashed #cbd5e1;border-radius:10px}
+.calculator-row{background:#fff;border:1px solid #e4e7ec;border-radius:12px;padding:14px;margin:10px 0}
+.calculator-row-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.calculator-row-title strong{display:block;line-height:1.45}.calculator-row-title small{display:block;color:#667085;margin-top:5px}.remove-calculator-item{font-size:20px;line-height:1;padding:5px 10px;color:#b42318}
+.calculator-input-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.calc-input-label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:600;color:#344054}
+.calc-input-label input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #d0d5dd;border-radius:8px;font:inherit;font-weight:500;color:#101828}
+.calc-input-label input[readonly]{background:#f2f4f7}.calc-no-money,.manager-not-applicable{padding:10px;border-radius:8px;background:#f9fafb;color:#667085;font-size:13px;line-height:1.5;font-weight:400}
+.calculator-row-total{text-align:right;color:#475467;font-size:13px;margin-top:12px}.calculator-row-total strong{color:#101828}
+.calculator-summary{margin-top:18px;padding:16px;background:#fff;border:1px solid #d0d5dd;border-radius:12px}
+.calc-total-line,.calc-grand-total{display:flex;justify-content:space-between;gap:12px;padding:10px 0}.calc-grand-total{border-top:1px solid #e4e7ec;margin-top:8px;padding-top:14px;font-weight:800;font-size:17px}.calc-grand-total strong{font-size:20px;color:#0b7a42}
+.add-to-calculator{margin-top:14px;border:1px solid #1570ef;border-radius:8px;padding:10px 14px;background:#eff8ff;color:#175cd3;font-weight:700;cursor:pointer}.add-to-calculator.is-added{border-color:#b2ddff;background:#f0f9ff;color:#026aa2;cursor:default}
+.penalty-text{margin-top:7px;max-width:340px;white-space:normal;line-height:1.6;font-size:13px;font-weight:600;color:#9a6a16}
+@media(max-width:600px){.calculator-input-grid{grid-template-columns:1fr}.penalty-calculator{padding:14px}.calc-grand-total{font-size:15px}.calc-grand-total strong{font-size:18px}}
+
+/* Pagination and sorting controls */
+.results-controls{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin:14px 0 18px;padding:14px;background:var(--panel,#fff);border:1px solid var(--border,#e5e7eb);border-radius:12px}
+.control-group{display:flex;flex-direction:column;gap:6px;min-width:180px}.control-group label{font-size:12px;font-weight:700;color:#64748b}.control-group select{padding:10px 12px;border:1px solid #d7dee8;border-radius:8px;background:#fff;color:#1f2937}
+.pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:16px 0}.page-info{font-size:13px;color:#64748b}.page-buttons{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.page-btn{min-width:36px;height:36px;padding:0 10px;border:1px solid #d7dee8;background:#fff;border-radius:8px;cursor:pointer;color:#334155}.page-btn.active{background:#1e40af;color:white;border-color:#1e40af;font-weight:700}.page-btn:disabled{opacity:.4;cursor:not-allowed}.page-ellipsis{padding:0 4px;color:#64748b}
+@media(max-width:600px){.results-controls{align-items:stretch}.control-group{flex:1;min-width:140px}.pagination{justify-content:center}.page-info{width:100%;text-align:center}}

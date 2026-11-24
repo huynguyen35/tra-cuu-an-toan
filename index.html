@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tra cứu & tính tiền phạt an toàn</title>
+<style>
+:root{--primary:#155eef;--primary-dark:#1247b8;--bg:#f4f6fa;--card:#fff;--text:#172033;--muted:#667085;--line:#e4e7ec;--green:#067647;--amber:#b54708;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Arial,Helvetica,sans-serif}
+header{background:#102a56;color:#fff;padding:22px max(20px,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}.brand-icon{width:48px;height:48px;border-radius:13px;background:#fff;color:#102a56;display:grid;place-items:center;font-weight:800;font-size:19px}
+h1{font-size:21px;margin:0 0 3px}header p{margin:0;color:#d0dcf0;font-size:12px;letter-spacing:.3px}.doc{text-align:right;font-weight:700}.doc small{display:block;color:#d0dcf0;font-weight:400}
+.container{max-width:1180px;margin:24px auto;padding:0 18px}
+.tabs{display:flex;gap:8px;background:#e9edf5;padding:6px;border-radius:13px;margin-bottom:20px;width:max-content;max-width:100%}
+.tab-btn{border:0;background:transparent;color:#475467;padding:11px 18px;border-radius:9px;font-weight:700;cursor:pointer}
+.tab-btn.active{background:#fff;color:var(--primary);box-shadow:0 1px 4px #10182818}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.panel-head{margin:0 0 16px}.panel-head h2{font-size:21px;margin:0 0 4px}.panel-head p{margin:0;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:13px;box-shadow:0 2px 5px #10182808}
+.search-panel{display:grid;grid-template-columns:minmax(220px,1fr) 220px 220px;gap:10px}
+input,select,button{font:inherit}input,select{width:100%;border:1px solid #d0d5dd;border-radius:9px;padding:11px 12px;background:#fff;color:var(--text);min-width:0}
+button{cursor:pointer}.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:700}.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}.btn-light{background:#eef2f8;color:#344054}.btn-danger{background:#fff0ef;color:var(--red)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:17px 0 12px}.muted{color:var(--muted);font-size:13px}
+.result-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;margin-bottom:12px}
+.result-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.result-card h3{margin:0 0 7px;font-size:17px}.tag{display:inline-block;background:#eef4ff;color:#3538cd;padding:3px 8px;border-radius:20px;font-size:12px}
+.penalty{font-weight:800;color:var(--green);white-space:nowrap}.penalty-text{font-weight:700;color:var(--amber);max-width:350px}
+.result-card p{margin:12px 0;color:#475467;white-space:pre-wrap;overflow-wrap:anywhere}.meta{font-size:13px;color:var(--muted);border-top:1px solid #f0f1f3;padding-top:10px;display:flex;gap:18px;flex-wrap:wrap}
+.card-actions{display:flex;justify-content:flex-end;margin-top:12px}
+.pager{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:20px 0}.pager button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 12px}.pager button.current{background:var(--primary);color:#fff;border-color:var(--primary)}.pager button:disabled{opacity:.4;cursor:not-allowed}
+.notice{background:#fffaeb;border:1px solid #fedf89;border-radius:11px;padding:13px 15px;color:#7a2e0e;font-size:13px;margin-top:18px}
+.empty{padding:34px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:12px}
+.calc-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.sum-box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px}.sum-box span{display:block;color:var(--muted);font-size:13px}.sum-box strong{font-size:20px;display:block;margin-top:5px}.sum-box.total{background:#102a56;color:#fff}.sum-box.total span{color:#d0dcf0}
+.calc-row{display:grid;grid-template-columns:minmax(180px,1.4fr) 150px 150px 90px;gap:10px;align-items:center;border-bottom:1px solid #eef0f3;padding:13px 0}.calc-row:last-child{border-bottom:0}.calc-name{font-weight:700}.calc-sub{font-size:12px;color:var(--muted);margin-top:3px}.calc-row input{padding:9px}.calc-row button{padding:8px;border:0;border-radius:8px;background:#fff0ef;color:var(--red)}
+.calc-label{font-size:12px;color:var(--muted);margin-bottom:4px}.empty-calc{padding:30px;text-align:center;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:25px 15px}
+@media(max-width:760px){header{padding:18px}.doc{text-align:left}.search-panel{grid-template-columns:1fr}.calc-summary{grid-template-columns:1fr}.calc-row{grid-template-columns:1fr 1fr}.calc-row .calc-info{grid-column:1/-1}.result-top{display:block}.penalty,.penalty-text{margin-top:10px}.tabs{width:100%}.tab-btn{flex:1;padding:10px 8px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="brand-icon">安</div><div><h1>TRA CỨU VI PHẠM AN TOÀN</h1><p>QUY ĐỊNH QUẢN LÝ THƯỞNG PHẠT AN TOÀN SẢN XUẤT</p></div></div>
+  <div class="doc">VP-AS-A-PMES-001<small>Phiên bản 01 · Sửa đổi lần 3</small></div>
+</header>
+
+<main class="container">
+  <nav class="tabs" aria-label="Các chức năng">
+    <button class="tab-btn active" data-tab="lookup">⌕ Tra cứu vi phạm</button>
+    <button class="tab-btn" data-tab="calculator">▦ Bảng tính tiền phạt <span id="selectedBadge"></span></button>
+  </nav>
+
+  <section id="lookupTab" class="tab-panel active">
+    <div class="panel-head"><h2>Tra cứu mức xử phạt</h2><p>Tìm hành vi vi phạm, xem căn cứ văn kiện và thêm nhiều lỗi vào bảng tính.</p></div>
+    <div class="card">
+      <div class="search-panel">
+        <input id="searchInput" type="search" placeholder="Tìm theo tên lỗi, từ khóa, điều khoản...">
+        <select id="categoryFilter"><option value="all">Tất cả nhóm vi phạm</option></select>
+        <select id="penaltyFilter">
+          <option value="all">Tất cả mức xử lý</option>
+          <option value="fixed">Có mức phạt cố định</option>
+          <option value="risk_assessment">Đánh giá theo rủi ro</option>
+          <option value="disciplinary">Xử lý hành chính</option>
+          <option value="pending">Chưa xác định mức phạt</option>
+        </select>
+      </div>
+      <div class="toolbar">
+        <div><strong id="resultCount">0</strong> <span class="muted">kết quả tìm thấy</span></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <label class="muted" for="sortSelect">Sắp xếp:</label>
+          <select id="sortSelect" style="width:auto">
+            <option value="default">Theo thứ tự dữ liệu</option>
+            <option value="name-asc">Tên A → Z</option>
+            <option value="name-desc">Tên Z → A</option>
+            <option value="amount-asc">Mức phạt thấp → cao</option>
+            <option value="amount-desc">Mức phạt cao → thấp</option>
+            <option value="category">Theo nhóm vi phạm</option>
+            <option value="article">Theo điều khoản</option>
+          </select>
+          <label class="muted" for="pageSize">Hiển thị:</label>
+          <select id="pageSize" style="width:auto"><option>10</option><option selected>20</option><option>50</option><option>100</option></select>
+        </div>
+      </div>
+    </div>
+    <div id="resultList"></div>
+    <div id="emptyState" class="empty" hidden>Không tìm thấy vi phạm phù hợp.</div>
+    <div id="pagination" class="pager"></div>
+    <div class="notice"><b>Lưu ý:</b> Website chỉ hiển thị mức tiền khi dữ liệu có căn cứ cố định. Trường hợp văn kiện yêu cầu đánh giá rủi ro hoặc phê duyệt xử lý, không tự suy ra số tiền. Tiền liên đới quản lý được nhập riêng, không tự áp dụng tỷ lệ nếu văn kiện không quy định.</div>
+  </section>
+
+  <section id="calculatorTab" class="tab-panel">
+    <div class="panel-head"><h2>Bảng tính tiền phạt</h2><p>Danh sách các lỗi đã chọn từ tab Tra cứu vi phạm. Có thể nhập tiền thủ công cho từng lỗi khi cần đánh giá.</p></div>
+    <div class="calc-summary">
+      <div class="sum-box"><span>Tổng tiền nhân viên</span><strong id="employeeTotal">0 VNĐ</strong></div>
+      <div class="sum-box"><span>Tổng liên đới quản lý</span><strong id="managerTotal">0 VNĐ</strong></div>
+      <div class="sum-box total"><span>TỔNG CỘNG</span><strong id="grandTotal">0 VNĐ</strong></div>
+    </div>
+    <div class="card">
+      <div class="toolbar" style="margin-top:0"><strong id="calcCount">0 lỗi đã chọn</strong><button id="clearAll" class="btn btn-danger" type="button">Xóa toàn bộ</button></div>
+      <div id="calculatorList"><div class="empty-calc">Chưa có lỗi nào. Hãy chọn lỗi ở tab Tra cứu vi phạm.</div></div>
+    </div>
+    <div class="muted">Ghi chú: số tiền liên đới quản lý do người lập bảng nhập theo quyết định xử lý thực tế; hệ thống không tự tính phần trăm.</div>
+  </section>
+</main>
+<footer>HỆ THỐNG TRA CỨU QUY ĐỊNH THƯỞNG PHẠT AN TOÀN · Sailun Việt Nam</footer>
+
+<!-- Giữ dữ liệu vi phạm ở file riêng. Đường dẫn tương đối từ index.html -->
+<script src="data/violations.js"></script>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const money = n => new Intl.NumberFormat("vi-VN").format(Number(n)||0) + " VNĐ";
+  const norm = s => String(s ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").trim();
+  const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  // Tương thích với dữ liệu dạng violations[] đã chuẩn hóa.
+  // Nếu file hiện tại chỉ có violationSections[]/rawText, mỗi mục 7.1.4 được hiển thị như một hồ sơ nguồn,
+  // không tự tách OCR thành từng hành vi để tránh gán sai mức phạt.
+  let source = [];
+  if (typeof violations !== "undefined" && Array.isArray(violations)) {
+    source = violations.map((v,i) => ({
+      id:String(v.id ?? i+1), name:v.name ?? v.title ?? "Chưa có tên vi phạm",
+      category:v.category ?? v.cat ?? "Khác", categoryName:v.categoryName ?? v.category ?? v.cat ?? "Khác",
+      description:v.description ?? v.note ?? "", article:v.article ?? v.clause ?? "",
+      keywords:Array.isArray(v.keywords)?v.keywords.join(" "):(v.keywords ?? ""),
+      penaltyType:v.penaltyType ?? (Number.isFinite(Number(v.penalty)) && v.penalty !== null ? "fixed" : "pending"),
+      penalty:Number.isFinite(Number(v.penalty)) && v.penalty !== null ? Number(v.penalty) : null,
+      penaltyText:v.penaltyText ?? v.amount ?? "Cần đối chiếu văn kiện",
+      repeatPenalty:v.repeatPenalty ?? "", managerLiability:!!v.managerLiability,
+      rawText:v.rawText ?? ""
+    }));
+  } else if (typeof violationSections !== "undefined" && Array.isArray(violationSections)) {
+    source = violationSections.map((v,i) => ({
+      id:String(v.id ?? i+1), name:`Mục ${v.id ?? i+1} – ${v.category ?? "Vi phạm an toàn"}`,
+      category:v.category ?? "Khác", categoryName:v.category ?? "Khác",
+      description:"Dữ liệu hiện được lưu theo nội dung gốc của mục văn kiện. Vui lòng mở nội dung để đối chiếu từng hành vi.",
+      article:v.id ?? "", keywords:v.rawText ?? "", penaltyType:"pending", penalty:null,
+      penaltyText:"Đối chiếu nội dung gốc; chưa tách thành từng hành vi", rawText:v.rawText ?? "",
+      repeatPenalty:"", managerLiability:false
+    }));
+  }
+
+  let page=1, cart=[];
+  const search=$("searchInput"), category=$("categoryFilter"), penalty=$("penaltyFilter");
+  const sort=$("sortSelect"), pageSize=$("pageSize");
+
+  function loadCategories(){
+    const cats=[...new Map(source.map(v=>[v.category,v.categoryName])).entries()].sort((a,b)=>a[1].localeCompare(b[1],"vi"));
+    cats.forEach(([id,name])=>{const o=document.createElement("option");o.value=id;o.textContent=name;category.appendChild(o);});
+  }
+  function amount(v){return v.penaltyType==="fixed" && Number.isFinite(v.penalty) ? v.penalty : null;}
+  function getFiltered(){
+    const q=norm(search.value), cat=category.value, pen=penalty.value;
+    let rows=source.filter(v=>{
+      const hay=norm([v.id,v.name,v.description,v.categoryName,v.article,v.keywords,v.penaltyText].join(" "));
+      return (!q||hay.includes(q))&&(cat==="all"||v.category===cat)&&(pen==="all"||v.penaltyType===pen);
+    });
+    const cmp=(a,b)=>String(a).localeCompare(String(b),"vi",{numeric:true,sensitivity:"base"});
+    switch(sort.value){
+      case "name-asc": rows.sort((a,b)=>cmp(a.name,b.name));break;
+      case "name-desc": rows.sort((a,b)=>cmp(b.name,a.name));break;
+      case "amount-asc": rows.sort((a,b)=>(amount(a)??Infinity)-(amount(b)??Infinity));break;
+      case "amount-desc": rows.sort((a,b)=>(amount(b)??-Infinity)-(amount(a)??-Infinity));break;
+      case "category": rows.sort((a,b)=>cmp(a.categoryName,b.categoryName)||cmp(a.name,b.name));break;
+      case "article": rows.sort((a,b)=>cmp(a.article,b.article));break;
+    }
+    return rows;
+  }
+  function card(v){
+    const fixed=amount(v)!==null;
+    const inCart=cart.some(x=>x.id===v.id);
+    const description=v.rawText ? v.rawText : v.description;
+    return `<article class="result-card">
+      <div class="result-top"><div><h3>${esc(v.name)}</h3><span class="tag">${esc(v.categoryName)}</span></div>
+      <div class="${fixed?"penalty":"penalty-text"}">${fixed?money(v.penalty):esc(v.penaltyText || "Cần đối chiếu văn kiện")}</div></div>
+      ${description?`<p>${esc(description)}</p>`:""}
+      <div class="meta"><span><b>Điều khoản:</b> ${esc(v.article||"Chưa ghi rõ")}</span><span><b>Mã:</b> ${esc(v.id)}</span></div>
+      <div class="card-actions"><button class="btn ${inCart?"btn-light":"btn-primary"}" data-add="${esc(v.id)}" ${inCart?"disabled":""}>${inCart?"✓ Đã thêm":"＋ Thêm vào bảng tính"}</button></div>
+    </article>`;
+  }
+  function render(){
+    const rows=getFiltered(), size=Number(pageSize.value)||20, pages=Math.max(1,Math.ceil(rows.length/size));
+    page=Math.min(page,pages); const start=(page-1)*size, shown=rows.slice(start,start+size);
+    $("resultCount").textContent=rows.length;
+    $("resultList").innerHTML=shown.map(card).join("");
+    $("emptyState").hidden=rows.length!==0;
+    const p=$("pagination");p.innerHTML="";
+    if(pages>1){
+      const add=(label,target,disabled=false,current=false)=>{const b=document.createElement("button");b.textContent=label;b.disabled=disabled;if(current)b.className="current";b.addEventListener("click",()=>{page=target;render();window.scrollTo({top:0,behavior:"smooth"});});p.appendChild(b);};
+      add("‹ Trước",page-1,page===1);
+      let nums=[];for(let n=1;n<=pages;n++){if(n===1||n===pages||Math.abs(n-page)<=2)nums.push(n);}
+      let last=0;nums.forEach(n=>{if(n-last>1){const s=document.createElement("span");s.textContent="…";p.appendChild(s);}add(String(n),n,false,n===page);last=n;});
+      add("Sau ›",page+1,page===pages);
+    }
+    $("selectedBadge").textContent=cart.length?`(${cart.length})`:"";
+  }
+  function addToCart(id){
+    const v=source.find(x=>x.id===id);if(!v||cart.some(x=>x.id===id))return;
+    cart.push({id:v.id,name:v.name,article:v.article,categoryName:v.categoryName,penaltyType:v.penaltyType,
+      fixedAmount:amount(v),employeeAmount:amount(v)??"",managerAmount:"",penaltyText:v.penaltyText||""});
+    render();renderCart();
+  }
+  function renderCart(){
+    $("calcCount").textContent=`${cart.length} lỗi đã chọn`;
+    $("calculatorList").innerHTML=cart.length?cart.map((v,i)=>`
+      <div class="calc-row" data-index="${i}">
+        <div class="calc-info"><div class="calc-name">${esc(v.name)}</div><div class="calc-sub">${esc(v.article||"Chưa ghi điều khoản")} · ${esc(v.penaltyText||"")}</div></div>
+        <div><div class="calc-label">Tiền nhân viên (VNĐ)</div><input type="number" min="0" step="1000" data-field="employeeAmount" value="${esc(v.employeeAmount)}" ${v.fixedAmount!==null?"":"placeholder='Nhập sau đánh giá'"}></div>
+        <div><div class="calc-label">Liên đới quản lý (VNĐ)</div><input type="number" min="0" step="1000" data-field="managerAmount" value="${esc(v.managerAmount)}" placeholder="Nhập nếu có"></div>
+        <button type="button" data-remove="${i}" aria-label="Xóa lỗi">Xóa</button>
+      </div>`).join(""):`<div class="empty-calc">Chưa có lỗi nào. Hãy chọn lỗi ở tab Tra cứu vi phạm.</div>`;
+    const emp=cart.reduce((s,v)=>s+(Number(v.employeeAmount)||0),0), mgr=cart.reduce((s,v)=>s+(Number(v.managerAmount)||0),0);
+    $("employeeTotal").textContent=money(emp);$("managerTotal").textContent=money(mgr);$("grandTotal").textContent=money(emp+mgr);
+    $("selectedBadge").textContent=cart.length?`(${cart.length})`:"";
+  }
+  document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",()=>{
+    document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active",x===btn));
+    $("lookupTab").classList.toggle("active",btn.dataset.tab==="lookup");
+    $("calculatorTab").classList.toggle("active",btn.dataset.tab==="calculator");
+    if(btn.dataset.tab==="calculator")renderCart();
+  }));
+  [search,category,penalty,sort,pageSize].forEach(el=>el.addEventListener(el===search?"input":"change",()=>{page=1;render();}));
+  $("resultList").addEventListener("click",e=>{const b=e.target.closest("[data-add]");if(b)addToCart(b.dataset.add);});
+  $("calculatorList").addEventListener("input",e=>{
+    const input=e.target.closest("[data-field]");if(!input)return;
+    const row=input.closest("[data-index]"), item=cart[Number(row.dataset.index)];if(!item)return;
+    item[input.dataset.field]=input.value;
+    const emp=cart.reduce((s,v)=>s+(Number(v.employeeAmount)||0),0),mgr=cart.reduce((s,v)=>s+(Number(v.managerAmount)||0),0);
+    $("employeeTotal").textContent=money(emp);$("managerTotal").textContent=money(mgr);$("grandTotal").textContent=money(emp+mgr);
+  });
+  $("calculatorList").addEventListener("click",e=>{const b=e.target.closest("[data-remove]");if(!b)return;cart.splice(Number(b.dataset.remove),1);renderCart();render();});
+  $("clearAll").addEventListener("click",()=>{if(!cart.length)return;if(confirm("Xóa toàn bộ lỗi khỏi bảng tính?")){cart=[];renderCart();render();}});
+  loadCategories();render();renderCart();
+  if(!source.length){$("resultList").innerHTML='<div class="empty">Không tìm thấy biến dữ liệu <b>violations</b> hoặc <b>violationSections</b>. Kiểm tra đường dẫn data/violations.js.</div>';}
+})();
+</script>
+</body>
+</html>
